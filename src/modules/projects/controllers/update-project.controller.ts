@@ -13,13 +13,13 @@ export const updateProjectController = async (
     const { status, progress } = req.body;
 
     const projectsRepository = new PrismaProjectsRepository(prisma);
-    const project = await projectsRepository.findById(id);
+    const project = await projectsRepository.findById(id as string);
 
     if (!project) {
       throw new AppError("Projeto não encontrado", 404);
     }
 
-    const updatedProject = await projectsRepository.update(id, { status, progress });
+    const updatedProject = await projectsRepository.update(id as string, { status, progress });
 
     return res.json(updatedProject);
   } catch (error) {

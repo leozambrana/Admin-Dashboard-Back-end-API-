@@ -14,7 +14,7 @@ export const getUserController = async (
     const userRepository = new PrismaUserRepository(prisma);
     const getUserUseCase = new GetUserUseCase(userRepository);
 
-    const result = await getUserUseCase.execute(id);
+    const result = await getUserUseCase.execute(id as string);
 
     return res.json(result);
   } catch (error) {

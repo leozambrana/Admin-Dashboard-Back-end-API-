@@ -17,7 +17,7 @@ export const updateUserController = async (
     const userRepository = new PrismaUserRepository(prisma);
     const updateUserUseCase = new UpdateUserUseCase(userRepository);
 
-    const result = await updateUserUseCase.execute(id, data);
+    const result = await updateUserUseCase.execute(id as string, data);
 
     return res.json(result);
   } catch (error) {

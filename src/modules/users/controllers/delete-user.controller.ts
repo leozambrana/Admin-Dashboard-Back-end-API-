@@ -14,7 +14,7 @@ export const deleteUserController = async (
     const userRepository = new PrismaUserRepository(prisma);
     const deleteUserUseCase = new DeleteUserUseCase(userRepository);
 
-    await deleteUserUseCase.execute(id);
+    await deleteUserUseCase.execute(id as string);
 
     return res.status(204).send();
   } catch (error) {
