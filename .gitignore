@@ -31,3 +31,8 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Arquivos locais e temporários de upload (Local Storage)
+uploads/
+tmp/
+

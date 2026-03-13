@@ -4,6 +4,9 @@ import { PrismaUserRepository } from "../repositories/prisma-user.repository";
 import { ListUsersUseCase } from "../use-cases/list-users.use-case";
 import { UserFilters } from "../entities/user-filters.vo";
 import { Status } from "@prisma/client";
+import { S3StorageProvider } from "../../../shared/providers/StorageProvider/implementations/S3StorageProvider";
+import { LocalStorageProvider } from "../../../shared/providers/StorageProvider/implementations/LocalStorageProvider";
+import uploadConfig from "../../../config/upload";
 
 export const listUsersController = async (
   req: Request,
@@ -23,7 +26,23 @@ export const listUsersController = async (
 
     const result = await listUsersUseCase.execute(filters);
 
-    return res.json(result);
+    const storageProvider = uploadConfig.driver === "s3" 
+      ? new S3StorageProvider() 
+      : new LocalStorageProvider();
+
+    const usersWithSignedUrls = await Promise.all(
+      result.data.map(async (user) => {
+        if (user.avatar && !user.avatar.startsWith("http")) {
+          user.avatar = await storageProvider.getSignedUrl(user.avatar, "avatar");
+        }
+        return user;
+      })
+    );
+
+    return res.json({
+      ...result,
+      data: usersWithSignedUrls,
+    });
   } catch (error) {
     next(error);
   }
